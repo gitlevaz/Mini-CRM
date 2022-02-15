@@ -1,6 +1,4 @@
-@extends('sb-layouts.app')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         *,
         ::after,
@@ -17,13 +15,13 @@
                     <!-- Horizontal Form -->
                     <div class="">
                         <div class="box-header with-border"><br>
-                            <h5 class="box-title"> Employees</h5>
+                            <h5 class="box-title"> Company</h5>
                         </div><br>
                         <!-- /.box-header -->
                         <!-- form start -->
 
                         <form class="form-horizontal" id="item_form" enctype="multipart/form-data">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
                             <input type="hidden" class="form-control" id="id" name="id">
 
 
@@ -31,57 +29,42 @@
                             <div class="box-body">
 
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">First Name<label
-                                            style="color:red">*</label></label>
+                                    <label class="col-sm-2 control-label">Name<label style="color:red">*</label></label>
 
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="f_name" required name="f_name"
-                                            value="">
+                                        <input type="text" class="form-control" required id="name" required name="name" value="">
                                     </div>
                                 </div>
-
-
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Last Name<label
-                                            style="color:red">*</label></label>
-
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="l_name" required name="l_name"
-                                            value="">
-                                    </div>
-                                </div>
-
-                                <div class="form-group images">
-                                    <label class="col-sm-2 control-label">Company</label>
-                                    <div class="col-sm-8">
-                                        <select class="form-control" id="company" required name="company">
-                                            <option value="">--Select--</option>
-                                            @foreach ($result as $item)
-                                                {
-                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                                }
-                                            @endforeach
-                                        </select>
-                                    </div><br>
-                                </div>
-
 
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Email</label>
 
                                     <div class="col-sm-8">
-                                        <input type="email" class="form-control" id="email" name="email" value="">
+                                        <input type="email"  pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/" required  class="form-control" id="email" required name="email" value="">
                                     </div>
+                                </div>
+
+                                <div class="form-group images">
+                                    <label class="col-sm-2 control-label">Logo</label>
+                                    
+                                                  
+                                    <div class="col-sm-8">     
+                                        <img id="thumb1" src="" alt="" width="100" height="100">
+                                        <input onchange="previewFile('thumb1', 'img1')"  id="img1" type="file"  accept="image/png, image/gif, image/jpeg"   name="image" class="py-2">
+                                        <div><?php echo e($errors->first('image')); ?></div>
+                                    </div><br>
+
                                 </div>
 
 
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">Phone</label>
+                                    <label class="col-sm-2 control-label">Website</label>
 
                                     <div class="col-sm-8">
-                                        <input type="number" class="form-control" id="phone" name="phone" value="">
+                                        <input type="text" class="form-control" id="website"  name="website" value="">
                                     </div>
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -125,7 +108,7 @@
                     <!-- Horizontal Form -->
                     <div class="">
                         <div class="box-header with-border"><br>
-                            <h5 class="box-title">Employees List</h5>
+                            <h5 class="box-title">Company List</h5>
                         </div><br>
                     </div>
 
@@ -135,12 +118,12 @@
                                 <tr>
                                     <th class="text-center">#</th>
                                     <th class="text-center">Name</th>
-                                    <th class="text-center">company</th>
-                                    {{-- <th class="text-center">Status</th> --}}
+                                    <th class="text-center">Email</th>
+                                    
                                     <th colspan="2" class="text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="emp-tbody">
+                            <tbody id="company-tbody">
 
                             </tbody>
                         </table>
@@ -157,6 +140,8 @@
 
 
     <script>
+
+
         $(document).ready(function() {
             $('#btn-update').hide();
             getAll();
@@ -176,7 +161,7 @@
             let formData = new FormData(myForm);
             $.ajax({
                 type: "POST",
-                url: "{{ route('add_emp') }}",
+                url: "<?php echo e(route('add_company')); ?>",
                 data: formData,
                 dataType: "JSON",
                 async: false,
@@ -205,7 +190,7 @@
             let formData = new FormData(myForm);
             $.ajax({
                 type: "POST",
-                url: "{{ route('emp.update') }}",
+                url: "<?php echo e(route('company.update')); ?>",
                 data: formData,
                 dataType: "JSON",
                 async: false,
@@ -224,17 +209,18 @@
         function getAll() {
             $.ajax({
                 type: "POST",
-                url: "{{ route('emp.all') }}",
+                url: "<?php echo e(route('company.all')); ?>",
                 headers: {
                     'XSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
                 dataType: "JSON",
                 data: "",
+       
                 success: function(response) {
-                    console.log('sssssssssssssssssssssssss');
-                    var tbody = $('#emp-tbody').html("");
+                    // console.log(response.data);
+                    var tbody = $('#company-tbody').html("");
                     $.each(response.data, function(q, value) {
-                        console.log(response);
+                        console.log(value.name);
                         var tr = document.createElement('tr');
                         var td1 = document.createElement('td');
                         var td2 = document.createElement('td');
@@ -242,13 +228,12 @@
                         var td4 = document.createElement('td');
                         var td5 = document.createElement('td');
                         var td6 = document.createElement('td');
-                        var td7 = document.createElement('td');
+                        var td7= document.createElement('td');
 
-                        $(td1).html(q + 1);
-                        $(td2).html(value.f_name);
-                        $(td3).html(value.l_name);
-                        $(td4).html(value.comapny_name);
-
+                        $(td1).html(q+1);
+                        $(td2).html(value.name);
+                        $(td3).html(value.email);
+                        $(td4).html(value.website);
                         $(td1).attr({
                             class: 'text-center'
                         });
@@ -261,7 +246,7 @@
                         $(td4).attr({
                             class: 'text-center'
                         });
-
+                        
                         $(td6).attr({
                             class: 'text-right'
                         });
@@ -269,7 +254,7 @@
                             class: 'text-left'
                         });
 
-                        // if (response[q].status == 1) {
+                        // if (value.status == 1) {
                         //     $(td5).html("<span class=\"label label-info\">Active</span>");
                         // } else {
                         //     $(td5).html("<span class=\"label label-danger\">Inactive</span>");
@@ -296,7 +281,7 @@
                         $(td6).append(btn);
                         $(td7).append(del);
 
-                        $(tr).append(td1, td2, td4, td6, td7);
+                        $(tr).append(td1, td2,  td3, td6, td7);
                         $(tbody).append(tr);
                     });
 
@@ -313,18 +298,16 @@
             $('#btn-update').show();
             $.ajax({
                 type: "POST",
-                url: "{{ route('emp.getDetails') }}",
+                url: "<?php echo e(route('company.getDetails')); ?>",
                 data: {
                     id: id
                 },
                 dataType: "JSON",
                 success: function(response) {
                     console.log(response);
-                    $('#f_name').val(response.f_name);
-                    $('#l_name').val(response.l_name);
+                    $('#name').val(response.name);
                     $('#email').val(response.email);
-                    $('#phone').val(response.phone);
-                    $('#company').val(response.company).change();
+                    $('#website').val(response.website);
                     $('#status').val(response.status).change();
                     $('#id').val(response.id);
                 },
@@ -337,7 +320,7 @@
         function selectdelete(id) {
             $.ajax({
                 type: "POST",
-                url: "{{ route('emp.delete') }}",
+                url: "<?php echo e(route('company.delete')); ?>",
                 data: {
                     id: id
                 },
@@ -350,5 +333,29 @@
                 }
             });
         }
+        
+
+        function previewFile(thumb_id, img_id) {
+    console.log(img_id);
+    var preview = $('.images #'+thumb_id);
+    var file    = $('.images #'+img_id).get(0).files[0];
+
+    var reader  = new FileReader();
+
+    reader.onloadend = function () {
+        preview.attr('src', reader.result);
+    }
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+    }
+    }
+    
     </script>
-@endsection
+
+
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('sb-layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp7.4\htdocs\Mini-CRM\resources\views/company/index.blade.php ENDPATH**/ ?>

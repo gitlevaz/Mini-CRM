@@ -48,10 +48,17 @@
 
                                 <div class="form-group images">
                                     <label class="col-sm-2 control-label">Logo</label>
-                                    <div class="col-sm-8">
+                                    {{-- <div class="col-sm-8">
                                         <input onchange="previewFile('thumb1', 'img1')" id="img1" type="file" name="image"
                                             class="py-2">
+                                    </div><br> --}}
+                                                  
+                                    <div class="col-sm-8">     
+                                        <img id="thumb1" src="" alt="" width="100" height="100">
+                                        <input onchange="previewFile('thumb1', 'img1')"  id="img1" type="file"  accept="image/png, image/gif, image/jpeg"   name="image" class="py-2">
+                                        <div>{{ $errors->first('image') }}</div>
                                     </div><br>
+
                                 </div>
 
 
@@ -331,6 +338,26 @@
                 }
             });
         }
+        
+
+        function previewFile(thumb_id, img_id) {
+    console.log(img_id);
+    var preview = $('.images #'+thumb_id);
+    var file    = $('.images #'+img_id).get(0).files[0];
+
+    var reader  = new FileReader();
+
+    reader.onloadend = function () {
+        preview.attr('src', reader.result);
+    }
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+    }
+    }
+    
     </script>
 
 

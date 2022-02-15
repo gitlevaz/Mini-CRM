@@ -72,8 +72,8 @@ class CompanyController  extends Controller
     public function GetAll()
     {
         // $result = Company::all()->where('status', 1);
-      $getresult = DB::table('companies')->where('status', 1)->orderBY('id','DESC')->paginate(10)->toArray();
-      $result= json_encode( $getresult);
+        $getresult = DB::table('companies')->where('status', 1)->orderBY('id', 'DESC')->paginate(10)->toArray();
+        $result = json_encode($getresult);
         return $result;
     }
 
@@ -86,18 +86,19 @@ class CompanyController  extends Controller
     public function Update(Request $request)
     {
         if ($request->hasFile('image')) {
-            $destinationPath = public_path().'/img/';
+            $destinationPath = public_path() . '/img/';
             $files = $request->file('image'); // will get all files     
             $file_name = $files->getClientOriginalName(); //Get file original name
-            $files->move($destinationPath , $file_name); // move files to destination folder
-        }else{
-            $file_name =NULL;
+            $files->move($destinationPath, $file_name); // move files to destination folder
+
+            $result = Company::where('id', $request->id)->update(
+                ['name' => $request->name, 'email' => $request->email, 'logo' => $file_name, 'website' => $request->website, 'status' => $request->status]
+            );
+        } else {
+            $result = Company::where('id', $request->id)->update(
+                ['name' => $request->name, 'email' => $request->email, 'website' => $request->website, 'status' => $request->status]
+            );
         }
-
-
-        $result = Company::where('id', $request->id)->update(
-            ['name' => $request->name, 'email' => $request->email,'logo' => $file_name, 'website' => $request->website,'status' => $request->status]
-        );
         return $result;
     }
 
